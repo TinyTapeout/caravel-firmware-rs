@@ -5,8 +5,10 @@ extern crate riscv_rt;
 
 use riscv_rt::entry;
 
-mod gpio;
 mod delay;
+mod gpio;
+mod mprj;
+mod uart;
 
 #[panic_handler]
 fn panic(_info: &::core::panic::PanicInfo) -> ! {
@@ -15,12 +17,17 @@ fn panic(_info: &::core::panic::PanicInfo) -> ! {
 
 #[entry]
 fn main() -> ! {
-    gpio::gpio_init();
+    gpio::init();
+    uart::init();
+    mprj::commit();
+
+    uart::write_str("Hello, Caravel!\n");
 
     loop {
-        gpio::gpio_write(0);
+        gpio::write(0);
         delay::wait(2000000);
-        gpio::gpio_write(1);
+        gpio::write(1);
         delay::wait(2000000);
+        uart::write_str("Blink!\n");
     }
 }
