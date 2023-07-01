@@ -10,6 +10,9 @@ mod gpio;
 mod mprj;
 mod uart;
 
+mod uart_printer;
+use uart_printer::Printer;
+
 #[panic_handler]
 fn panic(_info: &::core::panic::PanicInfo) -> ! {
     loop {}
@@ -23,11 +26,13 @@ fn main() -> ! {
 
     uart::write_str("Hello, Caravel!\n");
 
+    let mut count = 0;
     loop {
         gpio::write(0);
         delay::wait(2000000);
         gpio::write(1);
         delay::wait(2000000);
-        uart::write_str("Blink!\n");
+        println!("Counter: {}!", count);
+        count += 1;
     }
 }
