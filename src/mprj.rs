@@ -110,6 +110,30 @@ pub fn set_io_mode(index: u32, mode: u32) {
     }
 }
 
+fn io_reg(index: u32) -> *mut u32 {
+    if index >= 32 {
+        return REG_MPRJ_DATAH;
+    } else {
+        return REG_MPRJ_DATAL;
+    }
+}
+
+pub fn io_read(index: u32) -> u32 {
+    let shift = index & 0x1f;
+    unsafe {
+        return (core::ptr::read_volatile(io_reg(index)) >> shift) & 1;
+    }
+}
+
+pub fn io_write(index: u32, value: u32) {
+    let reg: *mut u32 = io_reg(index);
+    let mask: u32 = 1 << (index & 0x1f);
+    unsafe {
+        let current_value: u32 = core::ptr::read_volatile(reg) & !mask;
+        core::ptr::write_volatile(reg, current_value | ((!!value) << (index & 0x1f)));
+    }
+}
+
 pub fn commit() {
     unsafe {
         core::ptr::write_volatile(REG_MPRJ_XFER, 1);
