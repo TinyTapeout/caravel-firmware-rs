@@ -19,8 +19,8 @@ fn main() -> ! {
 
     loop {
         gpio::gpio_write(0);
-        delay::wait(1000);
+        delay::wait(2000000);
         gpio::gpio_write(1);
-        delay::wait(1000);
+        delay::wait(2000000);
     }
 }
