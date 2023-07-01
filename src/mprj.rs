@@ -125,12 +125,20 @@ pub fn io_read(index: u32) -> u32 {
     }
 }
 
+static mut IO_OUT_VALUES: [u32; 2] = [0u32; 2];
+
 pub fn io_write(index: u32, value: u32) {
     let reg: *mut u32 = io_reg(index);
     let mask: u32 = 1 << (index & 0x1f);
     unsafe {
-        let current_value: u32 = core::ptr::read_volatile(reg) & !mask;
-        core::ptr::write_volatile(reg, current_value | ((!!value) << (index & 0x1f)));
+        let current_value: u32 = IO_OUT_VALUES[(index >> 5) as usize];
+        let new_value: u32 = if value != 0 {
+            current_value | mask
+        } else {
+            current_value & !mask
+        };
+        IO_OUT_VALUES[(index >> 5) as usize] = new_value;
+        core::ptr::write_volatile(reg, new_value);
     }
 }
 
