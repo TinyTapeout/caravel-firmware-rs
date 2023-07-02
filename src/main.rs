@@ -9,6 +9,7 @@ mod delay;
 mod gpio;
 mod mprj;
 mod uart;
+mod wishbone;
 
 mod uart_printer;
 use uart_printer::Printer;
@@ -22,6 +23,7 @@ fn panic(_info: &::core::panic::PanicInfo) -> ! {
 fn main() -> ! {
     gpio::init();
     uart::init();
+    wishbone::wishbone_enable(true);
     mprj::set_io_mode(8, mprj::GPIO_MODE_MGMT_STD_OUTPUT); // Output
     mprj::commit();
 
