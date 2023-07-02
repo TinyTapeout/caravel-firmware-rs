@@ -16,6 +16,7 @@ use uart_printer::Printer;
 
 #[panic_handler]
 fn panic(_info: &::core::panic::PanicInfo) -> ! {
+    println!("{}", _info);
     loop {}
 }
 
